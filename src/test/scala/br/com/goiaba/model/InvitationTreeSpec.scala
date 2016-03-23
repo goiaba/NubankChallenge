@@ -96,7 +96,7 @@ class InvitationTreeSpec extends FunSuite {
 			.insert(8, 6))
   }
 
-	test("Score list before invitation invitations") {
+	test("Score list before invitations") {
 		val userByScore = InvitationTree(1)
 			.ranking
 

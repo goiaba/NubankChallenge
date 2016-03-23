@@ -11,17 +11,17 @@ import org.scalatest.{Matchers, WordSpec}
 class NubankServiceSpec extends WordSpec with Matchers with ScalatestRouteTest with NubankService {
 
   "In Nubank API, GETting from /" should {
-    "result in an html page" in {
+    "results in an html page" in {
       val getRequest = HttpRequest(HttpMethods.GET, uri = "/")
       getRequest ~> route ~> check {
         status.isSuccess() shouldEqual true
-        responseAs[String].contains("<html>") shouldEqual true
+        responseAs[String].contains("Welcome to nubank invitation challenge service.") shouldEqual true
       }
     }
   }
 
-  "In Nubank API, GETting from /ranking" should {
-    "result in a non empty list" in {
+  "In Nubank API, GETting from /ranking after initial file load" should {
+    "results in a non empty list of scores" in {
       val getRequest = HttpRequest(HttpMethods.GET, uri = "/ranking")
       getRequest ~> route ~> check {
         status.isSuccess() shouldEqual true
@@ -34,7 +34,7 @@ class NubankServiceSpec extends WordSpec with Matchers with ScalatestRouteTest w
     }
   }
   "In Nubank API, POSTing to /invitation" should {
-    "result in a confirmation answer" in {
+    "results in a confirmation answer" in {
       val data = ByteString(
         s"""
            |{
