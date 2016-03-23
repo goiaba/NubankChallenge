@@ -30,7 +30,7 @@ Although a well defined list of requirements was provided, some doubts about the
 2 - POST /invitation
 - Inserts a new invitation in the data structure
 - Content-Type: "application/json"
-- Example of the http Body: { "invitee": 10, "inviter": 9 }
+- Example of the http payload: { "invitee": 10, "inviter": 9 }
 - Chrome web browser has a nice rest client addon called Postman that can be used to test the invitation functionality
 
 ## Todo list
