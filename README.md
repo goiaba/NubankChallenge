@@ -41,6 +41,8 @@ Although a well defined list of requirements was provided, some doubts about the
 ## Running the app
 
     sbt run
+    or
+    PORT=<portNumber> sbt run
 
 ## Running the tests
 
