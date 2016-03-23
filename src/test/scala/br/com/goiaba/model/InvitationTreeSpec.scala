@@ -8,17 +8,17 @@ import org.scalatest.FunSuite
   */
 class InvitationTreeSpec extends FunSuite {
 
-	test("Nonexistent key inviting should throw an exception") {
-		intercept[RuntimeException] {
-			assert(Fixtures.initialTree == InvitationTree(1)
-				.insert(2, 4))
-		}
-	}
+  test("Nonexistent key inviting should throw an exception") {
+    intercept[RuntimeException] {
+      assert(Fixtures.initialTree == InvitationTree(1)
+        .insert(2, 4))
+    }
+  }
 
-	test("One invites Two") {
-		assert(Fixtures.oneInvitesTwo == InvitationTree(1)
-			.insert(2, 1))
-	}
+  test("One invites Two") {
+    assert(Fixtures.oneInvitesTwo == InvitationTree(1)
+      .insert(2, 1))
+  }
 
   test("One invites Three") {
     assert(Fixtures.oneInvitesThree == InvitationTree(1)
@@ -96,12 +96,12 @@ class InvitationTreeSpec extends FunSuite {
 			.insert(8, 6))
   }
 
-	test("Score list before invitations") {
-		val userByScore = InvitationTree(1)
-			.ranking
+  test("Score list before invitations") {
+    val userByScore = InvitationTree(1)
+      .ranking
 
-		assert(userByScore.isEmpty)
-	}
+    assert(userByScore.isEmpty)
+  }
 
   test("Score list after invitations") {
     val userByScore = InvitationTree(1)
