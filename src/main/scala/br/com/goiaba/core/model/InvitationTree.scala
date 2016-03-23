@@ -10,7 +10,6 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
 
   val scoreMultiplier = 0.5
 
-  //TODO: Is this bad idea use toList here?
   def find(key: Int): Option[InvitationTree] = key match {
     case this.key => Some(this)
     case _ => this.children.toList.flatMap(_.find(key)) match {
@@ -19,7 +18,6 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
     }
   }
 
-  //TODO: Is this bad idea use toList here?
   def findPath(key: Int): List[InvitationTree] = {
     def findPathRec(currTree: InvitationTree, currPath: List[InvitationTree]): List[InvitationTree] = key match {
       case currTree.key => currTree :: currPath
