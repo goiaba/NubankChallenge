@@ -1,5 +1,64 @@
+<!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 15px;
+            }
+            th {
+                text-align: center;
+            }
+            tr {
+                text-align: left;
+            }
+            footer {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 50px;
+                text-align: center;
+                width: 100%;
+            }
+        </style>
+    </head>
     <body>
-        <h1>Welcome to nubank invitation challenge service.</h1>
+        <section id="main">
+            <h1 style="text-align: center;">Welcome to Nubank invitation challenge service.</h1>
+            <table style="width: 100%;">
+                <caption><h2>Available operations:</h2></caption>
+                <tr>
+                    <th>HTTP Method</th>
+                    <th>Resource URI</th>
+                    <th>Payload</th>
+                    <th>Content-Type</th>
+                    <th>Response</th>
+                    <th>Brief explanation</th>
+                </tr>
+                <tr>
+                    <td>GET</td>
+                    <td>/ranking</td>
+                    <td></td>
+                    <td></td>
+                    <td>JSON Array</td>
+                    <td>A list containing users' scores</td>
+                </tr>
+                <tr>
+                    <td>POST</td>
+                    <td>/invitation</td>
+                    <td>{ "invitee": Integer, "inviter": Integer }</td>
+                    <td>"application/json"</td>
+                    <td>String message</td>
+                    <td>Inserts a new invitation in the InvitationTree. This request will be ignored if the inviter does not exist.</td>
+                </tr>
+
+            </table>
+        </section>
+        <footer>
+            <p>Created by: Bruno Correa - <a href="mailto:brunogmc@gmail.com">brunogmc@gmail.com</a></p>
+        </footer>
     </body>
 </html>
