@@ -42,7 +42,7 @@ class InvitationTreeManager extends Actor {
 
   override def receive: Receive = {
     case Invitation(invite) => state = {
-      log.info(s"Invitation request received (${invite.inviter} inviting ${invite.invitee}")
+      log.info(s"Invitation request received (${invite.inviter} inviting ${invite.invitee})")
       updateState(invite)
     }
     case Ranking => {
