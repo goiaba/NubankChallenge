@@ -1,5 +1,7 @@
 package br.com.goiaba.core.model
 
+import scala.annotation.tailrec
+
 /**
   * Created by bruno on 3/13/16.
   */
@@ -10,57 +12,62 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
 
   val scoreMultiplier = 0.5
 
-  def find(key: Int): Option[InvitationTree] = key match {
-    case this.key => Some(this)
-    case _ => this.children.toList.flatMap(_.find(key)) match {
+  def find(key: Int): Option[InvitationTree] = {
+    @tailrec def findRec(trees: List[InvitationTree]): Option[InvitationTree] = trees match {
       case Nil => None
-      case (h::_) => Some(h)
+      case (h :: t) =>
+        if (key == h.key) Option(h)
+        else findRec(t ::: h.children.toList)
     }
+    findRec(List(this))
   }
 
-  def findPath(key: Int): List[InvitationTree] = {
-    def findPathRec(currTree: InvitationTree, currPath: List[InvitationTree]): List[InvitationTree] = key match {
-      case currTree.key => currTree :: currPath
-      case _ => currTree.children.toList.flatMap(findPathRec(_, currTree :: currPath))
+  def pathTo(key: Int): List[InvitationTree] = {
+    def findPathRec(currTree: InvitationTree, currPath: List[InvitationTree]): List[InvitationTree] = {
+      if (key == currTree.key) currTree :: currPath
+      else currTree.children.toList.flatMap(findPathRec(_, currTree :: currPath))
     }
     findPathRec(this, List())
   }
 
-  override def insert(key: Int, parentKey: Int): InvitationTree = {
-    val p = find(parentKey).getOrElse(throw new RuntimeException("parentKey [" + parentKey + "] does not exist."))
-    val pathToParent = findPath(parentKey)
-    pathToParent match {
-      case Nil => throw new RuntimeException("Unexpected behavior on findPath method. Path to parent not found.")
-      case (h::t) => {
-        val z = find(key).isDefined match {
-          case true => p.copy(data = p.data.copy(hasInvitedBefore = true))
-          case _ => p.copy(data = p.data.copy(hasInvitedBefore = true), children = p.children + InvitationTree(key, Data()))
+  override def insert(key: Int, parentKey: Int): InvitationTree = find(parentKey) match {
+    case None => throw new RuntimeException("parentKey [" + parentKey + "] does not exist.")
+    case Some(parentTree) => {
+      val pathToParent = pathTo(parentKey)
+      pathToParent match {
+        case Nil => throw new RuntimeException("Unexpected behavior on findPath method. Path to parent not found.")
+        case (h :: t) => {
+          val z = find(key) match {
+            case None => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true),
+              children = parentTree.children + InvitationTree(key))
+            case Some(existingTree) => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true))
+          }
+          t.foldLeft(z)((acc, item) => {
+            val indexOfCurrentItem = pathToParent.indexOf(item)
+            val priorOutdatedItem = pathToParent.lift(indexOfCurrentItem-1).get
+            InvitationTree(item.key,
+              scoreFunction(item.data, parentTree.data.hasInvitedBefore, indexOfCurrentItem-1),
+              item.children.&~(Set(priorOutdatedItem)) + acc)
+          })
         }
-        t.foldLeft(z)((acc, item) => {
-          val indexOfCurrentItem = pathToParent.indexOf(item)
-          val priorOutdatedItem = pathToParent.lift(indexOfCurrentItem-1).get
-          InvitationTree(item.key,
-            scoreFunction(item.data, p.data.hasInvitedBefore, indexOfCurrentItem-1),
-            item.children.&~(Set(priorOutdatedItem)) + acc)
-        })
       }
     }
   }
 
-  def scoreFunction(data: Data, hasInvitedBefore: Boolean, level: Int): Data = hasInvitedBefore match {
+  protected def scoreFunction(data: Data, hasInvitedBefore: Boolean, level: Int): Data = hasInvitedBefore match {
     case true => data
     case false => Data(data.score + math.pow(scoreMultiplier, level), true)
   }
 
   def ranking: List[(Int, Double)] = {
-    def rankingRec(t: InvitationTree, l: List[(Int, Double)]): List[(Int, Double)] = {
-      (t.key, t.data.score) :: t.children.filter(_.data.hasInvitedBefore).flatMap(
-        child => rankingRec(child, (child.key, child.data.score) :: l)
-      ).toList
+    @tailrec def rankingRec(trees: List[InvitationTree], l: List[(Int, Double)]): List[(Int, Double)] = trees match {
+      case Nil => l
+      case (h :: t) => {
+        if (h.data.hasInvitedBefore) rankingRec(t ::: h.children.toList, (h.key, h.data.score) :: l)
+        else rankingRec(t ::: h.children.toList, l)
+      }
     }
-    this.data.hasInvitedBefore match {
-      case true => rankingRec(this, Nil).sortWith(_._2 > _._2)
-      case _ => Nil
-    }
+    rankingRec(List(this), List()).sortWith(_._2 > _._2)
   }
+
 }

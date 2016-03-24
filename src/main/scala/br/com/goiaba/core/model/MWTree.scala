@@ -5,6 +5,6 @@ package br.com.goiaba.core.model
   */
 trait MWTree[K, A, T <: MWTree[K,A,T]] {
   def find(key: K): Option[T]
-  def findPath(key: K): List[T]
+  def pathTo(key: K): List[T]
   def insert(key: K, parentKey: K): T
 }
