@@ -15,7 +15,7 @@ class NubankServiceSpec extends WordSpec with Matchers with ScalatestRouteTest w
       val getRequest = HttpRequest(HttpMethods.GET, uri = "/")
       getRequest ~> route ~> check {
         status.isSuccess() shouldEqual true
-        responseAs[String].contains("Welcome to nubank invitation challenge service.") shouldEqual true
+        responseAs[String].contains("Welcome to Nubank invitation challenge service.") shouldEqual true
       }
     }
   }
