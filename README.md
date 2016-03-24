@@ -31,6 +31,7 @@ Although a well defined list of requirements was provided, some doubts about the
 ## Main tools
 
 * Scala
+* sbt
 * akka-http
 * akka-actor
 
