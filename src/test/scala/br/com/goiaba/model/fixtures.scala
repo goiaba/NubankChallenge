@@ -10,6 +10,12 @@ object Fixtures {
 
   val initialTree = InvitationTree(1)
 
+  val pathToOne = List(1)
+
+  val pathToFour = List(4, 3, 1)
+
+  val pathToEight = List(8, 6, 4, 3, 1)
+
   val oneInvitesTwo =
     InvitationTree(1, Data(hasInvitedBefore = true), Set(
       InvitationTree(2, Data())

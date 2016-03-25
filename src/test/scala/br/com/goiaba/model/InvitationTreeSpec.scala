@@ -8,6 +8,17 @@ import org.scalatest.FunSuite
   */
 class InvitationTreeSpec extends FunSuite {
 
+  val completeTree = InvitationTree(1)
+    .insert(2, 1)
+    .insert(3, 1)
+    .insert(4, 3)
+    .insert(4, 2)
+    .insert(5, 4)
+    .insert(6, 4)
+    .insert(7, 5)
+    .insert(7, 6)
+    .insert(8, 6)
+
   test("Nonexistent key inviting should throw an exception") {
     intercept[RuntimeException] {
       assert(Fixtures.initialTree == InvitationTree(1)
@@ -84,37 +95,40 @@ class InvitationTreeSpec extends FunSuite {
   }
 
   test("Six invites Eight") {
-    assert(Fixtures.sixInvitesEight == InvitationTree(1)
-			.insert(2, 1)
-			.insert(3, 1)
-			.insert(4, 3)
-			.insert(4, 2)
-			.insert(5, 4)
-			.insert(6, 4)
-			.insert(7, 5)
-			.insert(7, 6)
-			.insert(8, 6))
+    assert(Fixtures.sixInvitesEight == completeTree)
+  }
+
+  test("Verify pathTo One") {
+    assert (Fixtures.pathToOne == completeTree.pathTo(1).map(_.key))
+  }
+
+  test("Verify pathTo Four") {
+    assert (Fixtures.pathToFour == completeTree.pathTo(4).map(_.key))
+  }
+
+  test("Verify pathTo Eight") {
+    assert (Fixtures.pathToEight == completeTree.pathTo(8).map(_.key))
+  }
+
+  test("Verify find One") {
+    assert (completeTree.find(1).get.key == 1)
+  }
+
+  test("Verify find Five") {
+    assert (completeTree.find(5).get.key == 5)
+  }
+
+  test("Verify find Six") {
+    assert (completeTree.find(6).get.key == 6)
   }
 
   test("Score list before invitations") {
-    val userByScore = InvitationTree(1)
-      .ranking
-
+    val userByScore = InvitationTree(1).ranking
     assert(userByScore.isEmpty)
   }
 
   test("Score list after invitations") {
-    val userByScore = InvitationTree(1)
-      .insert(2, 1)
-      .insert(3, 1)
-      .insert(4, 3)
-      .insert(4, 2)
-      .insert(5, 4)
-      .insert(6, 4)
-      .insert(7, 5)
-      .insert(7, 6)
-      .insert(8, 6)
-      .ranking
+    val userByScore = completeTree.ranking
 
     //Seven and Eight didn't invite anyone.
     assert(userByScore.size == 6)
