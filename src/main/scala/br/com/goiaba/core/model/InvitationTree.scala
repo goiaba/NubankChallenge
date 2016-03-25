@@ -47,8 +47,7 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
   override def insert(key: Int, data: Data, parentKey: Int): InvitationTree = find(parentKey) match {
     case None => throw new RuntimeException("parentKey [" + parentKey + "] does not exist.")
     case Some(parentTree) => find(key) match {
-      case Some(tree) if parentTree.data.hasInvitedBefore => this
-      case Some(tree) => updateTree(parentTree)
+      case Some(tree) => if (parentTree.data.hasInvitedBefore) this else updateTree(parentTree)
       case None => updateTree(parentTree, Option(key))
     }
   }
