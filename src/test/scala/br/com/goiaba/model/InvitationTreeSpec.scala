@@ -127,6 +127,96 @@ class InvitationTreeSpec extends FunSuite {
     assert(userByScore.isEmpty)
   }
 
+  test("Verify pathTo One") {
+    assert (Fixtures.pathToOne == InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .pathTo(1).map(_.key))
+  }
+
+  test("Verify pathTo Four") {
+    assert (Fixtures.pathToFour == InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .pathTo(4).map(_.key))
+  }
+
+  test("Verify pathTo Eight") {
+    assert (Fixtures.pathToEight == InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .pathTo(8).map(_.key))
+  }
+
+  test("Verify find One") {
+    val treeOne = InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .find(1)
+
+    assert (treeOne.get.key == 1)
+  }
+
+  test("Verify find Five") {
+    val treeOne = InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .find(5)
+
+    assert (treeOne.get.key == 5)
+  }
+
+  test("Verify find Six") {
+    val treeOne = InvitationTree(1)
+      .insert(2, 1)
+      .insert(3, 1)
+      .insert(4, 3)
+      .insert(4, 2)
+      .insert(5, 4)
+      .insert(6, 4)
+      .insert(7, 5)
+      .insert(7, 6)
+      .insert(8, 6)
+      .find(6)
+
+    assert (treeOne.get.key == 6)
+  }
+
   test("Score list after invitations") {
     val userByScore = completeTree.ranking
 
