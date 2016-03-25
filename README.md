@@ -28,6 +28,13 @@ Although a well defined list of requirements was provided, some doubts about the
 * If a user invites another user that already exists in the tree (witch means this user has already being invited before) its score does not change, but the scores of the users above it (in the path to the tree root) are updated
 * Invitations from nonexistent users are ignored
 
+## Main tools
+
+* Scala
+* sbt
+* akka-http
+* akka-actor
+
 ## Available endpoints
 
 * GET /ranking
