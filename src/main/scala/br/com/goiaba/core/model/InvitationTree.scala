@@ -44,11 +44,44 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
    * The 'data' argument is ignored, since all the information it
    * could carry are calculated here.
    */
-  override def insert(key: Int, data: Data, parentKey: Int): InvitationTree = find(parentKey) match {
-    case None => throw new RuntimeException("parentKey [" + parentKey + "] does not exist.")
-    case Some(parentTree) => find(key) match {
-      case Some(tree) => if (parentTree.data.hasInvitedBefore) this else updateTree(parentTree)
-      case None => updateTree(parentTree, Option(key))
+  override def insert(key: Int, data: Data, parentKey: Int): InvitationTree = {
+    def updateTree(parentTree: InvitationTree, key: Option[Int] = None): InvitationTree = {
+      def updateData(data: Data, hasInvitedBefore: Boolean, level: Int): Data = hasInvitedBefore match {
+        case true => data
+        case false => Data(data.score + math.pow(scoreMultiplier, level), true)
+      }
+      val newParentTree = key match {
+        case None => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true))
+        case Some(k) => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true),
+          children = parentTree.children + InvitationTree(k))
+      }
+      val pathToParent = pathTo(parentTree.key)
+      //pathToParent is guaranteed to be a List so we can call tail
+      pathToParent.tail.foldLeft(newParentTree)((acc, item) => {
+        //since we are here, inside the foldLeft, and considering it was applied over
+        // the tail of pathToParent, we are guaranteed that there is a prior item (head).
+        //
+        // indexOfPriorItem will be used to retrieve the outdated InvitationTree,
+        // priorOutdatedItem, that must be removed from the children's list of the
+        // current item. After this removal, a new InvitationTree will be generated
+        // with its children's list consisting of:
+        //   item.children diff Set(priorOutdatedItem) + acc
+        // where acc represents the InvitationTree created in the previous step of foldLeft.
+        //
+        // indexOfPriorItem will also be used as the level to update the score of the item
+        val indexOfPriorItem = pathToParent.indexOf(item)-1
+        val priorOutdatedItem = pathToParent.lift(indexOfPriorItem).get
+        InvitationTree(item.key,
+          updateData(item.data, parentTree.data.hasInvitedBefore, indexOfPriorItem),
+          (item.children diff Set(priorOutdatedItem)) + acc)
+      })
+    }
+    find(parentKey) match {
+      case None => throw new RuntimeException("parentKey [" + parentKey + "] does not exist.")
+      case Some(parentTree) => find(key) match {
+        case Some(tree) => if (parentTree.data.hasInvitedBefore) this else updateTree(parentTree)
+        case None => updateTree(parentTree, Option(key))
+      }
     }
   }
 
@@ -63,39 +96,6 @@ case class InvitationTree(key: Int, data: Data = Data(), children: Set[Invitatio
       }
     }
     rankingRec(List(this), List()).sortWith(_._2 > _._2)
-  }
-
-  protected def updateData(data: Data, hasInvitedBefore: Boolean, level: Int): Data = hasInvitedBefore match {
-    case true => data
-    case false => Data(data.score + math.pow(scoreMultiplier, level), true)
-  }
-
-  protected def updateTree(parentTree: InvitationTree, key: Option[Int] = None): InvitationTree = {
-    val newParentTree = key match {
-      case None => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true))
-      case Some(k) => parentTree.copy(data = parentTree.data.copy(hasInvitedBefore = true),
-    children = parentTree.children + InvitationTree(k))
-    }
-    val pathToParent = pathTo(parentTree.key)
-    //pathToParent is guaranteed to be a List so we can call tail
-    pathToParent.tail.foldLeft(newParentTree)((acc, item) => {
-      //since we are here, inside the foldLeft, and considering it was applied over
-      // the tail of pathToParent, we are guaranteed that there is a prior item (head).
-      //
-      // indexOfPriorItem will be used to retrieve the outdated InvitationTree,
-      // priorOutdatedItem, that must be removed from the children's list of the
-      // current item. After this removal, a new InvitationTree will be generated
-      // with its children's list consisting of:
-      //   item.children diff Set(priorOutdatedItem) + acc
-      // where acc represents the InvitationTree created in the previous step of foldLeft.
-      //
-      // indexOfPriorItem will also be used as the level to update the score of the item
-      val indexOfPriorItem = pathToParent.indexOf(item)-1
-      val priorOutdatedItem = pathToParent.lift(indexOfPriorItem).get
-      InvitationTree(item.key,
-        updateData(item.data, parentTree.data.hasInvitedBefore, indexOfPriorItem),
-        (item.children diff Set(priorOutdatedItem)) + acc)
-    })
   }
 
 }
