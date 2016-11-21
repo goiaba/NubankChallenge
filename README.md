@@ -10,9 +10,9 @@ Giving a company that plans to reward its customers for inviting their friends, 
 * Detailed information is located in the doc directory, exercise.txt file
 
 ## Solution outline
-The relation among a inviter and its invitees is easy to map with a multiway tree. This kind of tree allows each node to have a random number of children nodes, that are also considered as subtrees.
+The relation among an inviter and its invitees is easy to map with a multiway tree. This kind of tree allows each node to have a random number of children nodes, that are also considered subtrees.
 
-The tough part was figure out how to update the scores of each affected node. This is being done on every insertion in the tree. So, every time the ``insert`` method is called, a new node is created and all the affected nodes are updated. Since we are using an immutable tree, in order to improve performance, every non affected node is reused and a new tree is returned by the method.
+The tough part is to figure out how to update the scores of each affected node. This is being done on every insertion in the tree. So, every time the ``insert`` method is called, a new node is created and all the affected nodes are updated. Since we are creating an immutable tree and in order to improve performance, every non affected node is reused and a new tree is returned by the method.
 
 ### Strategy
 
